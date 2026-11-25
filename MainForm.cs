@@ -375,7 +375,7 @@ public sealed class MainForm : Form
     {
         if (_activeLab != "fusion") return;
         UpdateMetricsOnly();
-        if (_visual is not null) { _visual.Temperature = Temperature; _visual.Invalidate(); }
+        if (_visual is not null) { _visual.Temperature = Temperature; _visual.FuelShare = Fuel; _visual.Invalidate(); }
         _chart?.Invalidate();
     }
 
@@ -383,7 +383,7 @@ public sealed class MainForm : Form
     {
         if (_activeLab != "blackhole") return;
         UpdateMetricsOnly();
-        if (_visual is not null) { _visual.Spin = Spin; _visual.Accretion = Accretion; _visual.Invalidate(); }
+        if (_visual is not null) { _visual.Spin = Spin; _visual.MassExponent = MassExponent; _visual.Accretion = Accretion; _visual.Invalidate(); }
         _chart?.Invalidate();
     }
 
@@ -427,6 +427,8 @@ internal sealed class LabVisualPanel : Panel
     public string Mode { get; set; } = "fusion";
     public Color Accent { get; set; } = Color.Cyan;
     public int Temperature { get; set; } = 15;
+    public int FuelShare { get; set; } = 50;
+    public int MassExponent { get; set; } = 5;
     public int Spin { get; set; } = 70;
     public int Accretion { get; set; } = 60;
     private double _phase;
@@ -483,14 +485,15 @@ internal sealed class LabVisualPanel : Panel
         }
         using var foot = new Font("Segoe UI", 9F);
         g.DrawString($"PLASMA TEMPERATURE  {Temperature} keV", foot, sub, 22, Height - 52);
-        g.DrawString($"FUEL MIX  D {100 - 50}%  /  T 50%", foot, sub, 22, Height - 32);
+        g.DrawString($"FUEL MIX  D {FuelShare}%  /  T {100 - FuelShare}%", foot, sub, 22, Height - 32);
         g.DrawString("FIELD COILS  •  D–T PLASMA", foot, new SolidBrush(Accent), Width - 235, Height - 32);
     }
 
     private void DrawBlackHole(Graphics g)
     {
         float cx = Width * .53f, cy = Height * .53f;
-        float baseR = Math.Min(Width * .28f, Height * .38f);
+        float massScale = .78f + (MassExponent - 1) / 8f * .22f;
+        float baseR = Math.Min(Width * .28f, Height * .38f) * massScale;
         float r = baseR * (0.65f + Math.Min(Spin, 99) / 99f * .12f);
         using var title = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
         using var muted = new SolidBrush(Color.FromArgb(145, 162, 177));
@@ -511,13 +514,12 @@ internal sealed class LabVisualPanel : Panel
         using var rim = new Pen(Color.FromArgb(215, 231, 222, 211), 1.4f);
         g.DrawEllipse(rim, cx - r * .72f, cy - r * .72f, r * 1.44f, r * 1.44f);
         using var foot = new Font("Segoe UI", 9F);
-        g.DrawString($"MASS  10^{MassExponentPlaceholder()}  M☉", foot, muted, 22, Height - 52);
+        g.DrawString($"MASS  10^{MassExponent}  M☉", foot, muted, 22, Height - 52);
         g.DrawString($"SPIN  {Spin / 100.0:0.00}  /  ACCRETION  {Accretion}%", foot, muted, 22, Height - 32);
         g.DrawString("EVENT HORIZON", new Font("Segoe UI Semibold", 8F, FontStyle.Bold), new SolidBrush(Accent), Width - 165, Height - 32);
         _phase += .012;
     }
 
-    private int MassExponentPlaceholder() => 5;
 }
 
 internal sealed class ChartPanel : Panel
