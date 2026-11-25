@@ -21,19 +21,13 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Extract source archive
-        shell: pwsh
-        run: |
-          Expand-Archive -LiteralPath .\Nuclear-Lab-Simulator-source.zip -DestinationPath .\unpacked -Force
-          $project = ".\unpacked\Nuclear-Lab-Simulator\NuclearLabSimulator.csproj"
-          if (-not (Test-Path $project)) { throw "Project file not found in source archive" }
-          dotnet restore $project
+      - name: Restore
+        run: dotnet restore .\NuclearLabSimulator.csproj
 
-      - name: Publish single-file Windows app
+      - name: Build standalone Windows EXE
         shell: pwsh
         run: |
-          $project = ".\unpacked\Nuclear-Lab-Simulator\NuclearLabSimulator.csproj"
-          dotnet publish $project -c Release -r win-x64 --self-contained true `
+          dotnet publish .\NuclearLabSimulator.csproj -c Release -r win-x64 --self-contained true `
             -p:PublishSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true `
             -p:EnableCompressionInSingleFile=true `
